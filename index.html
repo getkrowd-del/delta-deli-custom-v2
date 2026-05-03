@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- BASE:START (managed by Coding Agent — do not edit) -->
+<base href="/delta-deli-custom-v2/">
+<!-- BASE:END -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+
+
+<!-- SEO Meta Tags -->
+<title>Delta Deli &amp; Smoke Shop | Oneida, NY</title>
+<meta property="og:title" content="Delta Deli &amp; Smoke Shop | Oneida, NY" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Delta Deli &amp; Smoke Shop | Oneida, NY" />
+<!-- End SEO Meta Tags -->
+
+<script data-field-replace>
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var fields={};
+  var paramMap={
+    'first_name':'firstName','last_name':'lastName','full_name':'fullName',
+    'email':'email','phone':'phone','company':'company',
+    'city':'city','state':'state','country':'country'
+  };
+  var skipTags={'SCRIPT':1,'STYLE':1,'NOSCRIPT':1,'TEXTAREA':1,'CODE':1,'PRE':1};
+  var hasUrlFields=false;
+  for(var p in paramMap){
+    var v=params.get(p);
+    if(v){fields[paramMap[p]]=v;hasUrlFields=true;}
+  }
+  var contactId=params.get('contact_id');
+  function esc(s){
+    if(!s)return s;
+    var d=document.createElement('div');
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
+  }
+  function doReplace(data){
+    var r={};
+    r['{{full_name}}']=esc(((data.firstName||'')+' '+(data.lastName||'')).trim()||((data.fullName||data.name)||''));
+    r['{{first_name}}']=esc(data.firstName||(data.name?data.name.split(' ')[0]:'')||'');
+    r['{{last_name}}']=esc(data.lastName||(data.name&&data.name.indexOf(' ')>-1?data.name.substring(data.name.indexOf(' ')+1):'')||'');
+    r['{{email}}']=esc(data.email||'');
+    r['{{phone}}']=esc(data.phone||'');
+    r['{{company}}']=esc(data.company||'');
+    r['{{city}}']=esc(data.city||'');
+    r['{{state}}']=esc(data.state||'');
+    r['{{country}}']=esc(data.country||'');
+    r['{{date}}']=new Date().toLocaleDateString();
+    r['{{time}}']=new Date().toLocaleTimeString();
+    r['{{location}}']=[data.city,data.state,data.country].filter(Boolean).join(', ');
+    r['{{tracking_id}}']=esc(data.trackingId||'');
+    r['{{lastClickedProduct}}']=esc(data.lastClickedProduct||'');
+    r['{{lastProductClickDate}}']=esc(data.lastProductClickDate||'');
+    r['{{lastClickedProductPrice}}']=esc(data.lastClickedProductPrice||'');
+    r['{{lastClickedProductURL}}']=esc(data.lastClickedProductURL||'');
+    r['{{productsClickedCount}}']=esc(data.productsClickedCount||'0');
+    r['{{ip_address}}']=esc(data.ipAddress||'');
+    r['{{ip}}']=esc(data.ipAddress||'');
+    if(data.customFields){
+      for(var k in data.customFields){
+        r['{{'+k+'}}']=esc(String(data.customFields[k]||''));
+      }
+    }
+    params.forEach(function(v,k){
+      if(!paramMap[k]&&k!=='contact_id'&&k!=='page_id'&&k.indexOf('utm_')!==0){
+        r['{{'+k+'}}']=esc(v);
+      }
+    });
+    var hasValues=false;
+    for(var key in r){if(r[key]){hasValues=true;break;}}
+    if(!hasValues)return;
+    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        var p=n.parentNode;
+        if(p&&skipTags[p.nodeName])return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var node;
+    while(node=walker.nextNode()){
+      var txt=node.nodeValue;
+      if(txt&&txt.indexOf('{{')>-1){
+        var changed=txt;
+        for(var ph in r){
+          if(r[ph]&&changed.indexOf(ph)>-1){
+            changed=changed.split(ph).join(r[ph]);
+          }
+        }
+        if(changed!==txt)node.nodeValue=changed;
+      }
+    }
+    var attrs=['value','placeholder','content','alt','title'];
+    attrs.forEach(function(attr){
+      var els=document.querySelectorAll('['+attr+'*="{{"]');
+      for(var i=0;i<els.length;i++){
+        var tag=els[i].tagName;
+        if(skipTags[tag])continue;
+        var val=els[i].getAttribute(attr);
+        if(val){
+          var nv=val;
+          for(var ph in r){
+            if(r[ph]&&nv.indexOf(ph)>-1){
+              nv=nv.split(ph).join(r[ph]);
+            }
+          }
+          if(nv!==val)els[i].setAttribute(attr,nv);
+        }
+      }
+    });
+  }
+  function run(){
+    if(contactId){
+      var xhr=new XMLHttpRequest();
+      xhr.open('GET','https://paymegpt.com/api/landing/context/'+encodeURIComponent(contactId)+'?page_id=3739');
+      xhr.onload=function(){
+        if(xhr.status===200){
+          try{
+            var resp=JSON.parse(xhr.responseText);
+            if(resp.success&&resp.contact){
+              var merged=resp.contact;
+              for(var k in fields){merged[k]=fields[k];}
+              doReplace(merged);
+              return;
+            }
+          }catch(e){}
+        }
+        if(hasUrlFields)doReplace(fields);
+      };
+      xhr.onerror=function(){if(hasUrlFields)doReplace(fields);};
+      xhr.send();
+    }else if(hasUrlFields){
+      doReplace(fields);
+    }
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',run);}
+  else{run();}
+})();
+</script>
+<script data-payment>
+(function(){
+  var slug='REVU3ERt';
+  var apiBase='https://paymegpt.com';
+  function findEmail(){
+    var ids=['email','emailAddress','buyer-email','buyerEmail','user-email','userEmail','checkout-email','customer-email','contact-email'];
+    for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el&&el.value&&el.value.includes('@'))return el.value.trim();}
+    var inputs=document.querySelectorAll('input[type="email"],input[name*="email"],input[placeholder*="email"],input[placeholder*="Email"]');
+    for(var j=0;j<inputs.length;j++){if(inputs[j].value&&inputs[j].value.includes('@'))return inputs[j].value.trim();}
+    return '';
+  }
+  function findName(){
+    var ids=['name','fullName','full-name','buyer-name','buyerName','customer-name','userName','user-name'];
+    for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el&&el.value)return el.value.trim();}
+    var inputs=document.querySelectorAll('input[name*="name"]:not([name*="email"]):not([type="email"]),input[placeholder*="name"]:not([placeholder*="email"]):not([type="email"]),input[placeholder*="Name"]:not([type="email"])');
+    for(var j=0;j<inputs.length;j++){if(inputs[j].value)return inputs[j].value.trim();}
+    return '';
+  }
+  var __realProcessPayment=function(a,b,c,d,e){
+    var amountCents,email,productName,productDescription,customerName,quantity;
+    if(a&&typeof a==='object'){
+      amountCents=a.amountCents;email=a.email;productName=a.productName;
+      productDescription=a.productDescription||'';customerName=a.name||'';quantity=a.quantity||1;
+    }else{
+      amountCents=typeof a==='number'?a:0;productName=typeof b==='string'?b:'';
+      productDescription=typeof c==='string'?c:'';email='';customerName='';quantity=1;
+    }
+    if(!email)email=findEmail();
+    if(!customerName)customerName=findName();
+    if(!productName){alert('Product name is required.');return Promise.reject('no_product_name');}
+    if(!amountCents||amountCents<100){alert('Amount must be at least $1.00');return Promise.reject('invalid_amount');}
+    if(!email){alert('Please enter your email address.');return Promise.reject('no_email');}
+    var successBase=window.location.href.split('?')[0];
+    return fetch(apiBase+'/api/landing-pages/public/'+slug+'/payment/checkout',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,name:customerName,amountCents:amountCents,productName:productName,productDescription:productDescription,quantity:quantity,successUrl:successBase+'?payment=success&product='+encodeURIComponent(productName)+'&session_id={CHECKOUT_SESSION_ID}',cancelUrl:successBase+'?payment=cancelled'})
+    }).then(function(r){return r.json();}).then(function(d){
+      if(d.checkoutUrl){window.location.href=d.checkoutUrl;}
+      else{alert(d.error||'Failed to process payment');throw new Error(d.error);}
+    });
+  };
+  Object.defineProperty(window,'__processPayment',{value:__realProcessPayment,writable:false,configurable:false});
+  document.addEventListener('DOMContentLoaded',function(){
+    var urlParams=new URLSearchParams(window.location.search);
+    if(urlParams.get('payment')==='success'){
+      var pName=urlParams.get('product')||'your item';
+      var overlay=document.createElement('div');overlay.id='payment-success-overlay';
+      overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999999;font-family:system-ui,-apple-system,sans-serif;';
+      overlay.innerHTML='<div style="background:white;border-radius:16px;padding:40px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);"><div style="width:64px;height:64px;border-radius:50%;background:#dcfce7;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><h2 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#111827;">Payment Successful!</h2><p style="margin:0 0 24px;color:#6b7280;font-size:16px;">Thank you for purchasing '+pName.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'.</p><button onclick="document.getElementById(\'payment-success-overlay\').remove();window.history.replaceState({},\'\',window.location.pathname);" style="padding:12px 32px;font-size:16px;font-weight:600;background:#16a34a;color:white;border:none;border-radius:8px;cursor:pointer;">Continue</button></div>';
+      document.body.appendChild(overlay);
+    }
+  });
+})();
+</script>  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#"><span>DELTA</span> DELI</a>
+  <div class="nav-links">
+    <a href="https://deltadelibites.com/menu/">Menu</a>
+    <a href="#specials">Daily Specials</a>
+    <a href="#visit">Visit Us</a>
+    <a href="https://www.doordash.com/store/32899723?utm_source=mx_share&aw=q5tLO79E5CQQVoKJ" class="nav-cta">Order Now</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Oneida, NY's Favorite Spot</div>
+    <h1><span class="delta">DELTA</span>DELI</h1>
+    <p class="hero-sub">Fresh. Bold. Made to Order.</p>
+    <div class="hero-buttons">
+      <a href="https://deltadelibites.com/menu/" class="btn-primary">View Full Menu</a>
+      <a href="https://www.doordash.com/store/32899723?utm_source=mx_share&aw=q5tLO79E5CQQVoKJ" class="btn-secondary">🚗 Order on DoorDash</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll to Explore</div>
+</section>
+
+<div class="badge-strip">
+  <div class="badge-track">
+    <span class="badge-item">DELI SUBS</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">PHILLY CHEESESTEAK</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">CHOPPED CHEESE</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">FRESH SMOOTHIES</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">DAILY SPECIALS</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">BURGERS & FRIES</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">MADE TO ORDER</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">DELI SUBS</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">PHILLY CHEESESTEAK</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">CHOPPED CHEESE</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">FRESH SMOOTHIES</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">DAILY SPECIALS</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">BURGERS & FRIES</span><span class="badge-item badge-dot">✦</span>
+    <span class="badge-item">MADE TO ORDER</span><span class="badge-item badge-dot">✦</span>
+  </div>
+</div>
+
+<section class="menu-section" id="menu">
+  <div class="section-header">
+    <div class="section-label">What We Serve</div>
+    <h2 class="section-title">THE MENU</h2>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card">
+      <img src="https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=800&q=80" alt="Deli Subs">
+      <div class="menu-card-overlay"><span class="menu-card-icon">🥖</span><div class="menu-card-tag">Signature</div><div class="menu-card-title">Deli Subs & Sandwiches</div><p class="menu-card-desc">Build your own sub. All made to order with fresh ingredients stacked the way you like it.</p></div>
+      <div class="menu-card-arrow">→</div>
+    </div>
+    <div class="menu-card">
+      <img src="https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800&q=80" alt="From the Grill">
+      <div class="menu-card-overlay"><span class="menu-card-icon">🔥</span><div class="menu-card-tag">From the Grill</div><div class="menu-card-title">Philly's, Burgers & More</div><p class="menu-card-desc">Philly Cheesesteak, Chopped Cheese, Burgers, Fries and more. Daily lunch specials that hit different.</p></div>
+      <div class="menu-card-arrow">→</div>
+    </div>
+    <div class="menu-card">
+      <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80" alt="Healthy Options">
+      <div class="menu-card-overlay"><span class="menu-card-icon">🥗</span><div class="menu-card-tag">Fresh & Light</div><div class="menu-card-title">Healthy Options</div><p class="menu-card-desc">Smoothies, salads, and wraps made with the freshest ingredients daily. Eat clean, stay sharp.</p></div>
+      <div class="menu-card-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<section class="featured-section">
+  <div class="featured-image">
+    <img src="https://images.unsplash.com/photo-1553909489-cd47e0907980?w=900&q=80" alt="Italian sub stacked high">
+    <div class="featured-image-overlay"></div>
+  </div>
+  <div class="featured-content">
+    <div class="section-label">Why Delta Deli</div>
+    <h2 class="featured-quote">Built Different.<br><span class="highlight">Stacked Different.</span></h2>
+    <p class="featured-body">We're not a chain. We're your neighborhood spot. Every sub is stacked to order, every ingredient is fresh, and every customer gets the same love we'd give family. That's the Delta way — come in once, you'll be back.</p>
+    <a href="https://deltadelibites.com/menu/" class="btn-primary" style="width:fit-content;">Explore the Full Menu</a>
+  </div>
+</section>
+
+<section class="specials-section" id="specials">
+  <div class="section-label">Every Day</div>
+  <h2 class="section-title">DAILY SPECIALS</h2>
+  <div class="specials-grid">
+    <div class="special-card"><span class="special-num">01</span><span class="special-icon">🥩</span><div class="special-title">Philly Cheesesteak</div><p class="special-desc">Shaved ribeye, grilled onions & peppers, smothered in cheese. The classic that never misses.</p></div>
+    <div class="special-card"><span class="special-num">02</span><span class="special-icon">🍔</span><div class="special-title">Chopped Cheese</div><p class="special-desc">NYC bodega-style. Ground beef, cheese, onions — chopped and grilled right on the flat top.</p></div>
+    <div class="special-card"><span class="special-num">03</span><span class="special-icon">🥤</span><div class="special-title">Fresh Smoothies</div><p class="special-desc">Blended fresh every day. Real fruit, no shortcuts. The cleanest thing on the menu.</p></div>
+    <div class="special-card"><span class="special-num">04</span><span class="special-icon">🍟</span><div class="special-title">Lunch Specials</div><p class="special-desc">Ask us what's good today. Daily specials rotate — always something worth coming in for.</p></div>
+  </div>
+</section>
+
+<section class="gallery-section">
+  <div class="gallery-header">
+    <div class="section-label">Fresh Every Day</div>
+    <h2 class="section-title">THE SPREAD</h2>
+  </div>
+  <div class="gallery-scroll">
+    <div class="gallery-img"><img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80" alt="Sub sandwich"></div>
+    <div class="gallery-img"><img src="https://images.unsplash.com/photo-1481070414801-51fd732d7184?w=600&q=80" alt="Grilled sandwich"></div>
+    <div class="gallery-img"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80" alt="Fresh salad"></div>
+    <div class="gallery-img"><img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&q=80" alt="Burger"></div>
+    <div class="gallery-img"><img src="https://images.unsplash.com/photo-1601004890657-3d6c1a5e3a64?w=600&q=80" alt="Fries"></div>
+    <div class="gallery-img"><img src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&q=80" alt="Smoothie"></div>
+  </div>
+</section>
+
+<section class="cta-section" id="visit">
+  <div class="cta-bg"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content">
+    <div class="section-label" style="justify-content:center;">Oneida, NY</div>
+    <h2 class="cta-title">COME <span>EAT</span><br>WITH US</h2>
+    <p class="cta-sub">Stop by, call ahead, or hit us on DoorDash</p>
+    <div class="cta-buttons">
+      <a href="https://www.doordash.com/store/32899723?utm_source=mx_share&aw=q5tLO79E5CQQVoKJ" class="btn-primary">🚗 Order on DoorDash</a>
+      <a href="https://deltadelibites.com/menu/" class="btn-secondary">View Full Menu</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a class="footer-logo" href="#">DELTA <span>DELI</span></a>
+    <div class="footer-info">Oneida, NY's Favorite Neighborhood Deli & Smoke Shop<br>© 2025 Delta Deli and Smoke Shop. All Rights Reserved.</div>
+    <div class="footer-links">
+      <a href="https://deltadelibites.com/menu/">Menu</a>
+      <a href="https://www.doordash.com/store/32899723?utm_source=mx_share&aw=q5tLO79E5CQQVoKJ">DoorDash</a>
+    </div>
+  </div>
+</footer>
+
+<!-- DELTA DELI CHAT WIDGET -->
+<div id="delta-chat-wrapper">
+  <div id="delta-chat-popout">
+    <span id="delta-popout-close" onclick="dismissPopout()">✕</span>
+    <p>👋 Welcome to <strong>Delta Deli!</strong> Ask me about our menu, daily specials, or how to order on DoorDash!</p>
+  </div>
+  <div id="delta-chat-bubble" onclick="toggleDeltaChat()" title="Chat with Delta Deli!">
+    <img src="https://krowdimg.b-cdn.net/delta.png" alt="Delta Deli">
+  </div>
+</div>
+
+<script>
+  window.PayMeGPTConfig = { widgetId: '88718392', primaryColor: '#f5a623', position: 'bottom-right', autoOpen: false, hideLauncher: true };
+  var chatOpen = false, dismissed = false;
+  function dismissPopout() {
+    var p = document.getElementById('delta-chat-popout');
+    p.classList.add('hide');
+    setTimeout(function(){ p.style.display='none'; }, 250);
+    dismissed = true;
+  }
+  function toggleDeltaChat() {
+    if (!dismissed) dismissPopout();
+    if (window.PayMeGPT) { chatOpen ? (window.PayMeGPT.close(), chatOpen=false) : (window.PayMeGPT.open(), chatOpen=true); }
+  }
+  function nukeDefault() {
+    ['#paymegpt-bubble-btn','[id*="paymegpt-bubble"]','[class*="paymegpt-bubble"]','[id*="pmgpt-launcher"]','[class*="pmgpt-launcher"]','div[data-paymegpt-launcher]','[class*="widget-launcher"]','[class*="widget-bubble"]'].forEach(function(s){
+      try { document.querySelectorAll(s).forEach(function(el){ el.style.cssText='display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;width:0!important;height:0!important;position:absolute!important;top:-9999px!important;left:-9999px!important;'; }); } catch(e){}
+    });
+    document.querySelectorAll('body > div').forEach(function(el){
+      if (el.id==='delta-chat-wrapper'||el.id==='delta-chat-bubble'||el.id==='delta-chat-popout') return;
+      var s=window.getComputedStyle(el), inline=el.getAttribute('style')||'';
+      if (s.position==='fixed'||inline.includes('fixed')) {
+        var r=el.getBoundingClientRect();
+        if (r.width<120&&r.height<120&&r.width>0) {
+          var bg=s.backgroundColor||'', br=s.borderRadius||'';
+          if (br.includes('50%')||bg.includes('245, 166')||bg.includes('f5a623')||inline.includes('border-radius: 50%')) {
+            el.style.cssText='display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;';
+          }
+        }
+      }
+    });
+    document.querySelectorAll('iframe').forEach(function(el){ var s=window.getComputedStyle(el); if(s.position==='fixed'){var r=el.getBoundingClientRect();if(r.width<150&&r.height<150)el.style.cssText='display:none!important;';} });
+  }
+  nukeDefault();
+  setInterval(nukeDefault, 150);
+  new MutationObserver(function(){ nukeDefault(); }).observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['style','class','id']});
+  window.addEventListener('load', nukeDefault);
+</script>
+<script src="https://paymegpt.com/widget.js" data-widget="88718392" async></script>
+
+</body>
+</html>
