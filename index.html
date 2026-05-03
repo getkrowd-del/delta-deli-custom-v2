@@ -328,7 +328,7 @@
   </div>
 </footer>
 
-<!-- DELTA DELI CHAT WIDGET -->
+<!-- DELTA DELI CHAT — iframe-based so open/close is 100% reliable -->
 <div id="delta-chat-wrapper">
   <div id="delta-chat-popout">
     <span id="delta-popout-close" onclick="dismissPopout()">✕</span>
@@ -339,44 +339,17 @@
   </div>
 </div>
 
-<script>
-  window.PayMeGPTConfig = { widgetId: '88718392', primaryColor: '#f5a623', position: 'bottom-right', autoOpen: false, hideLauncher: true };
-  var chatOpen = false, dismissed = false;
-  function dismissPopout() {
-    var p = document.getElementById('delta-chat-popout');
-    p.classList.add('hide');
-    setTimeout(function(){ p.style.display='none'; }, 250);
-    dismissed = true;
-  }
-  function toggleDeltaChat() {
-    if (!dismissed) dismissPopout();
-    if (window.PayMeGPT) { chatOpen ? (window.PayMeGPT.close(), chatOpen=false) : (window.PayMeGPT.open(), chatOpen=true); }
-  }
-  function nukeDefault() {
-    ['#paymegpt-bubble-btn','[id*="paymegpt-bubble"]','[class*="paymegpt-bubble"]','[id*="pmgpt-launcher"]','[class*="pmgpt-launcher"]','div[data-paymegpt-launcher]','[class*="widget-launcher"]','[class*="widget-bubble"]'].forEach(function(s){
-      try { document.querySelectorAll(s).forEach(function(el){ el.style.cssText='display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;width:0!important;height:0!important;position:absolute!important;top:-9999px!important;left:-9999px!important;'; }); } catch(e){}
-    });
-    document.querySelectorAll('body > div').forEach(function(el){
-      if (el.id==='delta-chat-wrapper'||el.id==='delta-chat-bubble'||el.id==='delta-chat-popout') return;
-      var s=window.getComputedStyle(el), inline=el.getAttribute('style')||'';
-      if (s.position==='fixed'||inline.includes('fixed')) {
-        var r=el.getBoundingClientRect();
-        if (r.width<120&&r.height<120&&r.width>0) {
-          var bg=s.backgroundColor||'', br=s.borderRadius||'';
-          if (br.includes('50%')||bg.includes('245, 166')||bg.includes('f5a623')||inline.includes('border-radius: 50%')) {
-            el.style.cssText='display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;';
-          }
-        }
-      }
-    });
-    document.querySelectorAll('iframe').forEach(function(el){ var s=window.getComputedStyle(el); if(s.position==='fixed'){var r=el.getBoundingClientRect();if(r.width<150&&r.height<150)el.style.cssText='display:none!important;';} });
-  }
-  nukeDefault();
-  setInterval(nukeDefault, 150);
-  new MutationObserver(function(){ nukeDefault(); }).observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['style','class','id']});
-  window.addEventListener('load', nukeDefault);
-</script>
-<script src="https://paymegpt.com/widget.js" data-widget="88718392" async></script>
+<!-- iframe chat panel — opens on bubble click, no PayMeGPT JS API needed -->
+<div id="delta-chat-panel">
+  <iframe
+    src="https://paymegpt.com/agents/88718392/embed"
+    allow="microphone"
+    title="Delta Deli Chat">
+  </iframe>
+</div>
 
+
+
+  <script src="script.js"></script>
 </body>
 </html>
